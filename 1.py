@@ -104,3 +104,13 @@ masses = [
 fuel = sum([(mass // 3) - 2 for mass in masses])
 
 print(fuel)
+
+def fuel_for_weight(weight):
+    fuel = max((weight // 3) - 2, 0)
+    if fuel > 0:
+        fuel += fuel_for_weight(fuel)
+    return fuel
+
+fuel = sum([fuel_for_weight(mass) for mass in masses])
+
+print(fuel)
