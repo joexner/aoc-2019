@@ -1,68 +1,16 @@
 program = [
-    [
-        'R8',
-        'U5',
-        'L5',
-        'D3',
-    ],
-    [
-        'U7',
-        'R6',
-        'D4',
-        'L4',
-    ]
+['R8','U5','L5','D3',],
+['U7','R6','D4','L4',]
 ]
 
 program=[
-[
-    'R75',
-    'D30',
-    'R83',
-    'U83',
-    'L12',
-    'D49',
-    'R71',
-    'U7',
-    'L72',
-],
-[
-    'U62',
-    'R66',
-    'U55',
-    'R34',
-    'D71',
-    'R55',
-    'D58',
-    'R83',
-],
+['R75','D30','R83','U83','L12','D49','R71','U7','L72',],
+['U62','R66','U55','R34','D71','R55','D58','R83',],
 ]
 
 program=[
-[
-    'R98',
-    'U47',
-    'R26',
-    'D63',
-    'R33',
-    'U87',
-    'L62',
-    'D20',
-    'R33',
-    'U53',
-    'R51',
-],
-[
-    'U98',
-    'R91',
-    'D20',
-    'R16',
-    'D67',
-    'R40',
-    'U7',
-    'R15',
-    'U6',
-    'R7',
-],
+['R98','U47','R26','D63','R33','U87','L62','D20','R33','U53','R51',],
+['U98','R91','D20','R16','D67','R40','U7','R15','U6','R7',],
 ]
 
 program=[
@@ -70,29 +18,32 @@ program=[
 ['L1010','D698','R442','U660','L719','U702','L456','D86','R938','D177','L835','D639','R166','D285','L694','U468','L569','D104','L234','D574','L669','U299','L124','D275','L179','D519','R617','U72','L985','D248','R257','D276','L759','D834','R490','U864','L406','U181','R911','U873','R261','D864','R260','U759','R648','U158','R308','D386','L835','D27','L745','U91','R840','U707','R275','U543','L663','U736','L617','D699','R924','U103','R225','U455','R708','U319','R569','U38','R315','D432','L179','D975','R519','D546','L295','U680','L685','U603','R262','D250','R7','U171','R261','U519','L832','U534','L471','U431','L474','U886','R10','D179','L79','D555','R452','U452','L832','U863','L367','U538','L237','D160','R441','U605','R942','U259','L811','D552','R646','D353','L225','D94','L35','D307','R752','U23','R698','U610','L379','D932','R698','D751','R178','D347','R325','D156','R471','D555','R558','D593','R773','U2','L955','U764','L735','U438','R364','D640','L757','U534','R919','U409','R361','U407','R336','D808','R877','D648','R610','U198','R340','U94','R795','D667','R811','U975','L965','D224','R565','D681','L64','U567','R621','U922','L665','U329','R242','U592','L727','D481','L339','U402','R213','D280','R656','U169','R976','D962','L294','D505','L251','D689','L497','U133','R230','D441','L90','D220','L896','D657','L500','U331','R502','U723','R762','D613','L447','D256','L226','U309','L935','U384','L740','D459','R309','D707','R952','D747','L304','D105','R977','D539','R941','D21','R291','U216','R132','D543','R515','U453','L854','D42','R982','U102','L469','D639','R559','D68','R302','U734','R980','D214','R107','D191','L730','D793','L63','U17','R807','U196','R412','D592','R330','D941','L87','D291','L44','D94','L272','D780','R968','U837','L712','D704','R163','U981','R537','U778','R220','D303','L196','D951','R163','D446','R11','D623','L72','D778','L158','U660','L189','D510','L247','D716','L89','U887','L115','U114','L36','U81','R927','U293','L265','U183','R331','D267','R745','D298','L561','D918','R299','U810','L322','U679','L739','D854','L581','U34','L862','D779','R23'],
 ]
 
-grid = {}
-def set_grid(x, y, value):
-    x_slice = grid.get(x)
+grid = [{},{}]
+def set_grid(idx, position, value):
+    x = position[0]
+    y = position[1]
+    x_slice = grid[idx].get(x)
     if not x_slice:
-        x_slice = grid[x] = {}
+        x_slice = grid[idx][x] = {}
     x_slice[y] = value
 
-def get_grid(x, y):
-    x_val = grid.get(x)
+def get_grid(idx, position):
+    x = position[0]
+    y = position[1]
+    x_val = grid[idx].get(x)
     if x_val:
-        return x_val.get(y) or False
-    else:
-        return False
+        return x_val.get(y)
 
 
-
-set_grid(0, 0, True)
 
 position = [0, 0]
+set_grid(0, position, 0)
+
 
 
 wire_1_iter = iter(program[0])
 
+total_dist = 0
 for command in program[0]:
     direction = command[0:1]
     distance = int(command[1:])
@@ -107,10 +58,13 @@ for command in program[0]:
         elif direction == 'D':
             position[0] -= 1
         # print(f"Marking {position}")
-        set_grid(position[0], position[1], True)
+        total_dist += 1
+        # total_dist = get_grid(0, position) or total_dist
+        set_grid(0, position, total_dist)
 
 min_intersection_distance=99999
 position = [0, 0]
+total_dist = 0
 
 for command in program[1]:
     direction = command[0:1]
@@ -126,10 +80,11 @@ for command in program[1]:
         elif direction == 'D':
             position[0] -= 1
         # print(f"Walking {position}")
-        grid_value = get_grid(position[0], position[1])
+        total_dist += 1
+        grid_value = get_grid(0, position)
         if grid_value:
-            print(f"Found intersection at {position}")
-            intersection_distance = abs(position[0]) + abs(position[1])
+            intersection_distance = total_dist + grid_value
+            print(f"Found intersection at {position} with distance {intersection_distance}")
             if intersection_distance < min_intersection_distance:
                 min_intersection_distance = intersection_distance
 
